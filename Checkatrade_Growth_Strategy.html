@@ -1,0 +1,2346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkatrade Growth Strategy</title>
+<style>
+  :root {
+    --navy: #1a2332;
+    --dark: #2c3e50;
+    --mid: #4a6274;
+    --light-text: #6b7c8a;
+    --border: #dce3e8;
+    --bg: #f7f9fb;
+    --white: #ffffff;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --amber: #d97706;
+    --amber-bg: #fef3c7;
+    --red: #dc2626;
+    --red-bg: #fee2e2;
+    --purple: #7c3aed;
+    --purple-bg: #ede9fe;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* Header */
+  .header {
+    background: var(--navy);
+    color: white;
+    padding: 28px 40px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .header .subtitle {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 400;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: #cbd5e1; }
+  .tab-btn.active {
+    color: white;
+    border-bottom-color: var(--accent);
+  }
+
+  /* Content */
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 40px 60px;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Memo styles */
+  .memo h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--navy);
+    margin: 36px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .memo h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 28px 0 10px;
+  }
+  .memo h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--mid);
+    margin: 20px 0 8px;
+  }
+  .memo p { margin: 0 0 12px; color: var(--dark); }
+  .memo ul, .memo ol {
+    margin: 0 0 12px 20px;
+    color: var(--dark);
+  }
+  .memo li { margin-bottom: 4px; }
+  .memo blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    background: var(--accent-light);
+    margin: 16px 0;
+    font-style: italic;
+    color: var(--mid);
+    border-radius: 0 6px 6px 0;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+  .toc h3 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--light-text);
+    margin: 0 0 12px;
+  }
+  .toc a {
+    display: block;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 3px 0;
+  }
+  .toc a:hover { text-decoration: underline; }
+  .toc .indent { padding-left: 16px; font-size: 13px; }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-header {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-header .num {
+    background: var(--navy);
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Status badges */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+  .badge-blue { background: var(--accent-light); color: var(--accent); }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    background: var(--navy);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #f8fafc; }
+
+  /* Frameworks / Diagrams */
+  .framework {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .framework-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--light-text);
+    margin-bottom: 18px;
+  }
+
+  /* Pillar assessment */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .pillar {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    text-align: center;
+    position: relative;
+  }
+  .pillar-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--light-text);
+    margin-bottom: 8px;
+  }
+  .pillar-score {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .pillar-verdict {
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .pillar-desc {
+    font-size: 13px;
+    color: var(--mid);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* Strategic bets */
+  .bets-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .bet-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    border-left: 4px solid;
+  }
+  .bet-card:nth-child(1) { border-left-color: var(--accent); }
+  .bet-card:nth-child(2) { border-left-color: var(--purple); }
+  .bet-card:nth-child(3) { border-left-color: var(--green); }
+  .bet-card:nth-child(4) { border-left-color: var(--amber); }
+  .bet-num {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .bet-card:nth-child(1) .bet-num { color: var(--accent); }
+  .bet-card:nth-child(2) .bet-num { color: var(--purple); }
+  .bet-card:nth-child(3) .bet-num { color: var(--green); }
+  .bet-card:nth-child(4) .bet-num { color: var(--amber); }
+  .bet-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .bet-desc {
+    font-size: 13px;
+    color: var(--mid);
+    line-height: 1.5;
+  }
+
+  /* Arrow connectors */
+  .connector-section {
+    text-align: center;
+    padding: 16px 0;
+    color: var(--light-text);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .connector-section .arrow {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Sequence / flow */
+  .sequence {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 20px 0;
+  }
+  .seq-step {
+    flex: 1;
+    padding: 18px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    position: relative;
+    text-align: center;
+  }
+  .seq-step:first-child { border-radius: 8px 0 0 8px; }
+  .seq-step:last-child { border-radius: 0 8px 8px 0; }
+  .seq-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--accent);
+    z-index: 2;
+    background: var(--bg);
+    padding: 2px;
+  }
+  .seq-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--light-text);
+    margin-bottom: 6px;
+  }
+  .seq-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  /* Initiative cards */
+  .initiative {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 16px;
+  }
+  .init-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+  .init-body {}
+  .init-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .init-why {
+    font-size: 13px;
+    color: var(--mid);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .init-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .init-box {
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 12px;
+  }
+  .init-box-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--light-text);
+    margin-bottom: 6px;
+  }
+  .init-box-content {
+    font-size: 13px;
+    color: var(--dark);
+    line-height: 1.5;
+  }
+
+  /* Flywheel */
+  .flywheel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .flywheel-ring {
+    position: relative;
+    width: 420px;
+    height: 420px;
+  }
+  .fly-node {
+    position: absolute;
+    width: 150px;
+    padding: 12px;
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--dark);
+    line-height: 1.4;
+  }
+  .fly-node.top { top: 0; left: 50%; transform: translateX(-50%); border-color: var(--accent); }
+  .fly-node.right { top: 50%; right: 0; transform: translateY(-50%); border-color: var(--green); }
+  .fly-node.bottom { bottom: 0; left: 50%; transform: translateX(-50%); border-color: var(--purple); }
+  .fly-node.left { top: 50%; left: 0; transform: translateY(-50%); border-color: var(--amber); }
+  .fly-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    background: var(--navy);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .fly-arrow {
+    position: absolute;
+    color: var(--light-text);
+    font-size: 20px;
+  }
+  .fly-arrow.tr { top: 18%; right: 18%; }
+  .fly-arrow.br { bottom: 18%; right: 18%; }
+  .fly-arrow.bl { bottom: 18%; left: 18%; }
+  .fly-arrow.tl { top: 18%; left: 18%; }
+
+  /* Org chart */
+  .org-chart {
+    text-align: center;
+  }
+  .org-level {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .org-box {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    min-width: 240px;
+    max-width: 300px;
+    text-align: left;
+    background: var(--white);
+  }
+  .org-box.leader {
+    border-color: var(--navy);
+    background: var(--navy);
+    color: white;
+    text-align: center;
+    min-width: 300px;
+  }
+  .org-box.leader .org-title { color: white; }
+  .org-box.leader .org-sub { color: #94a3b8; }
+  .org-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 2px;
+  }
+  .org-sub {
+    font-size: 12px;
+    color: var(--light-text);
+    margin-bottom: 8px;
+  }
+  .org-owns {
+    font-size: 12px;
+    color: var(--mid);
+    line-height: 1.5;
+  }
+  .org-kpi {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+  }
+  .org-kpi-label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--light-text);
+  }
+  .org-kpi-val {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .org-connector {
+    text-align: center;
+    padding: 6px 0;
+    color: var(--light-text);
+    font-size: 16px;
+  }
+
+  /* Phase bars */
+  .phase-bar {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .phase-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--mid);
+    text-align: right;
+  }
+  .bar-track {
+    height: 28px;
+    background: var(--bg);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+  }
+  .bar-seg {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+    transition: width 0.3s;
+  }
+
+  /* Section intro */
+  .section-intro {
+    background: var(--navy);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .section-intro strong {
+    color: #93c5fd;
+  }
+
+  /* Print */
+  @media print {
+    .header { position: static; }
+    .tabs { display: none; }
+    .tab-content { display: block !important; page-break-before: always; }
+    .tab-content:first-child { page-break-before: avoid; }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .content { padding: 20px; }
+    .pillars { grid-template-columns: 1fr; }
+    .bets-grid { grid-template-columns: 1fr; }
+    .init-details { grid-template-columns: 1fr; }
+    .sequence { flex-direction: column; }
+    .seq-step:not(:last-child)::after { display: none; }
+    .org-level { flex-direction: column; align-items: center; }
+  }
+
+  .tldr-box {
+    background: #f0f4ff;
+    border: 1px solid #c7d7fe;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: var(--dark);
+  }
+  .tldr-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .shift-visual {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    align-items: center;
+    gap: 0;
+    margin: 20px 0;
+  }
+  .shift-box {
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .shift-box.from {
+    background: var(--red-bg);
+    border: 1px solid #fca5a5;
+  }
+  .shift-box.to {
+    background: var(--green-bg);
+    border: 1px solid #86efac;
+  }
+  .shift-arrow {
+    text-align: center;
+    font-size: 24px;
+    color: var(--mid);
+  }
+  .shift-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 6px;
+  }
+  .shift-box.from .shift-label { color: var(--red); }
+  .shift-box.to .shift-label { color: var(--green); }
+  .shift-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .shift-desc {
+    font-size: 12px;
+    color: var(--mid);
+  }
+
+  /* Category filter */
+  .criteria-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .criteria-item {
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .criteria-check {
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--mid);
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <h1>Checkatrade Growth Strategy</h1>
+    <span class="subtitle">Chief Growth Officer - Case Study</span>
+  </div>
+  <div class="tabs" id="tabBar">
+    <button class="tab-btn active" onclick="switchTab('memo')">Full Memo</button>
+    <button class="tab-btn" onclick="switchTab('context')">Strategic Context</button>
+    <button class="tab-btn" onclick="switchTab('findings')">Findings</button>
+    <button class="tab-btn" onclick="switchTab('core')">Core Business</button>
+    <button class="tab-btn" onclick="switchTab('express')">Express Strategy</button>
+    <button class="tab-btn" onclick="switchTab('org')">Org &amp; KPIs</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 1: FULL MEMO -->
+<!-- ============================================================ -->
+<div class="content">
+<div class="tab-content active" id="tab-memo">
+
+<div class="toc">
+  <h3>Contents</h3>
+  <a href="#exec">Executive Summary</a>
+  <a href="#a">A. Context</a>
+  <a href="#a1" class="indent">A.1 Directory &rarr; Operating System</a>
+  <a href="#a2" class="indent">A.2 AI-shaped market dynamics</a>
+  <a href="#a3" class="indent">A.3 One integrated system</a>
+  <a href="#a4" class="indent">A.4 Four strategic bets</a>
+  <a href="#b">B. Findings - Case study Part 1.1</a>
+  <a href="#b1" class="indent">B.1 Demand growth gap</a>
+  <a href="#b2" class="indent">B.2 BOs per customer gap</a>
+  <a href="#b3" class="indent">B.3 Hire rate leakage</a>
+  <a href="#b4" class="indent">B.4 App product gap</a>
+  <a href="#c">C. Recommendations for the Core Business - Case study Part 1.2</a>
+  <a href="#c1" class="indent">C.1 AI-native onboarding &amp; intake</a>
+  <a href="#c2" class="indent">C.2 Matching &amp; workflow routing</a>
+  <a href="#c3" class="indent">C.3 App as default for high-intent users</a>
+  <a href="#c4" class="indent">C.4 Why these bets matter beyond the core business</a>
+  <a href="#d">D. Managed Marketplace / Express - Case study Part 2</a>
+  <a href="#d1" class="indent">D.1 Express as managed wedge</a>
+  <a href="#d2" class="indent">D.2 GTM strategy</a>
+  <a href="#d3" class="indent">D.3 Marketing &amp; growth engine</a>
+  <a href="#d4" class="indent">D.4 Sustainable growth loop</a>
+  <a href="#d5" class="indent">D.5 Team structure</a>
+</div>
+
+<div class="memo">
+
+<h2 id="exec">Checkatrade Growth Strategy Memo</h2>
+<h2>Executive Summary</h2>
+<p>Checkatrade should not try to win the next phase of the market by being a better directory. It should win by becoming the managed operating layer between homeowners and trades.</p>
+<p>The core business still matters. It funds the transition and should be improved, not managed down. But the long-term source of defensibility will shift away from traffic and leads alone and toward four strategic bets:</p>
+<ul>
+  <li>Go deeper with supply by becoming the operating system for tradespeople, not just a source of leads.</li>
+  <li>Move up the marketplace management stack by using Express and adjacent models to shift from introductions toward trusted outcomes.</li>
+  <li>Build AI natively into the marketplace to improve scoping, matching, routing, and time-to-value.</li>
+  <li>Increase customer engagement by building the operating system homeowners use to manage their household over time.</li>
+</ul>
+<p>The current data points to three immediate issues: demand likely needs to grow to hit plan, hire rate is too low and deteriorating, and the app is not yet creating a meaningfully better experience than web. That means the near-term priority is not simply more scale. It is to improve demand quality, improve BO-to-hire conversion, and make the app valuable enough to become the default surface for high-intent users.</p>
+<p>For the core business, I would focus on three initiatives:</p>
+<ul>
+  <li>rebuild onboarding and intake as an AI-native problem-to-plan flow to improve BO quality</li>
+  <li>improve matching and workflow routing to increase hire rate</li>
+  <li>once the app proves superior conversion, retention, and LTV, shift more high-intent users from web into the app</li>
+</ul>
+<p>For Express, I would treat it as the wedge into a more managed marketplace and launch supply-first within existing demand pools, starting in a small number of dense cities and digestible categories. Marketing capital should be allocated with discipline: first to owned demand and routing from the core business, then to organic and brand, then to selected trust-led pilots, with paid scaled only where supply readiness and payback are proven.</p>
+<p>Organizationally, I would run Checkatrade as one integrated system, not two businesses: dedicated Growth and Express pods, supported by a shared Marketplace Intelligence and Platform layer. That is the structure most likely to let Checkatrade protect today's revenue engine while building the product, data, and operating foundations of its next phase of growth.</p>
+
+<h2 id="a">A. Context</h2>
+<div class="tldr-box">
+  <div class="tldr-label">TL;DR</div>
+  <ul>
+    <li>Checkatrade's future is not a better directory; it is a homeowner OS and a trade OS.</li>
+    <li>In an AI-shaped market, defensibility will concentrate in hard-to-replicate supply, higher levels of marketplace management, and higher levels of customer engagement.</li>
+    <li>Checkatrade is strong on supply, weak on marketplace management, and exposed on customer engagement.</li>
+    <li>The strategic answer is in 4 strategic bets: deeper supply advantage, higher level of marketplace management, AI-native matching and routing, and stronger customer engagement through building operating systems for our customers on both sides.</li>
+  </ul>
+</div>
+
+<h3 id="a1">A.1 The next version of Checkatrade is not a better directory - it is a household operating system for homeowners and a growth operating system for trades</h3>
+<blockquote>&ldquo;I'm a homeowner in London. Today, when something breaks in my home, I still have to do too much work myself. I need to figure out what kind of trade I even need, describe the issue, compare options, chase responses, judge whether pricing feels fair, and hope I pick someone reliable. In the future, I want Checkatrade to do that work with me. I want to describe the problem once, get guided to the right solution, book with confidence, pay through the platform, and then come back to the same place to manage the rest of my household over time. Not just a plumber today, but my boiler service next month, my garden in spring, and the electrician I trust when I move house. I do not want a directory. I want a household operating system.&rdquo;</blockquote>
+<blockquote>&ldquo;I'm a tradesperson in Manchester. Today, platforms help me get discovered, but I still spend too much time sorting through poor-fit leads, quoting manually, and trying to turn inconsistent, unstructured demands into a real business. In the future, I want Checkatrade to understand my capabilities, service area, availability, response speed, pricing patterns, and job preferences, then bring me the right work in the right format. I want fewer dead ends, less admin, better conversion, and software that helps me run my business, not just advertise it. I do not want to keep paying for visibility alone. I want a platform that helps me grow.&rdquo;</blockquote>
+<p>That is the strategic shift: from directory to single-player mode on both sides of the marketplace. For homeowners, Checkatrade should become the system that helps manage the household. For trades, it should become the system that helps manage demand, workflow, and business operations.</p>
+
+<h3 id="a2">A.2 In an AI-shaped market, value will concentrate in hard supply, deeper marketplace management, and stronger direct engagement</h3>
+<p>Marketplaces historically tolerated high CAC because they earned it back through repeat usage, habit, and the economics of the ongoing relationship. If AI becomes the default place customers start, some marketplaces will be forced to reacquire demand transaction by transaction. That compresses margins and weakens repeat behavior.</p>
+<p>The winners will be the marketplaces that remain essential because they:</p>
+<ul>
+  <li>aggregate hard-to-replicate supply</li>
+  <li>manage more of the workflow</li>
+  <li>give customers a reason to come back directly</li>
+</ul>
+<p>Checkatrade should be assessed through those three lenses.</p>
+
+<h4>1. Supply aggregation: strong foundation</h4>
+<p>Checkatrade is well positioned on supply. Local trade supply is fragmented, heterogeneous, and difficult to make legible. The company already has real advantages in brand, vetting, and scale.</p>
+<p>The gap is not access to supply. It is making supply legible in real time: who is right for which job, how likely they are to respond, and what outcome quality to expect.</p>
+<p>What I am missing here that might slightly change this view is current supply concentration data.</p>
+<p>Takeaway: Checkatrade has a real supply moat, but has not yet turned it into a superior matching and fulfillment advantage.</p>
+
+<h4>2. Marketplace management: weakest today, biggest upside</h4>
+<p>This is the biggest strategic gap. Lead gen is the least defensible end of the spectrum. Managed marketplaces are more defensible because they own more of what customers actually care about: scoping, pricing, trust, payments, and service delivery.</p>
+<p>This is also where AI matters most. In home services, demand is messy. Customers often do not know what they need, jobs are hard to scope, and pricing is inconsistent. AI can turn unstructured intent into structured scope, which makes booking, guarantees, and managed fulfillment much more feasible.</p>
+<p>Takeaway: marketplace management is Checkatrade's weakest pillar today and its biggest source of future value.</p>
+
+<h4>3. Customer engagement: exposed unless Checkatrade broadens its role</h4>
+<p>Home services is low-frequency and medium/high-consideration. That makes it vulnerable to AI intermediaries unless Checkatrade gives customers a stronger reason to come direct.</p>
+<p>The answer is not to force frequency. It is to broaden the platform's role:</p>
+<ul>
+  <li>maintenance</li>
+  <li>planning</li>
+  <li>records</li>
+  <li>guarantees</li>
+  <li>credit</li>
+  <li>rebooking</li>
+  <li>reminders</li>
+  <li>trusted household management</li>
+</ul>
+<p>The same applies on the trade side: engagement deepens if Checkatrade becomes part of how the trade runs the business.</p>
+<p>Takeaway: Checkatrade is vulnerable if it remains a discovery layer; it is much stronger if it becomes infrastructure for both households and trades.</p>
+
+<h3 id="a3">A.3 The implication: run core and Express as one integrated system</h3>
+<p>Checkatrade is:</p>
+<ul>
+  <li>strong on supply aggregation</li>
+  <li>underdeveloped on marketplace management</li>
+  <li>exposed on engagement on both sides unless it expands its role</li>
+</ul>
+<p>So the right strategy is not to run lead gen and Express as separate businesses. It is to build one system that routes jobs dynamically across service levels:</p>
+<ul>
+  <li>some jobs stay in lead gen</li>
+  <li>some move to guided matching</li>
+  <li>some move to fixed-price or instant-book</li>
+  <li>some become more deeply managed over time</li>
+</ul>
+<p>The core business monetizes introductions today. Express is where Checkatrade learns to monetize outcomes.</p>
+
+<h3 id="a4">A.4 The window to act is now: 4 strategic bets</h3>
+<p>If AI becomes the starting point for home services discovery, the basis of advantage shifts. Checkatrade will not win by being closer to search. It will win by being closer to the outcome.</p>
+<p>That leads to four strategic bets:</p>
+<h4>1. Go deeper with supply by becoming the operating system for tradespeople</h4>
+<p>Checkatrade should deepen its supply moat by helping trades manage demand, workflow, availability, reputation, pricing signals, and repeat business.</p>
+<h4>2. Move up the marketplace management stack</h4>
+<p>The company should do the things AI layers will not do well on their own: guarantees, booking reliability, payments, credit, dispute resolution, trust, and selected managed fulfillment.</p>
+<h4>3. Build AI natively into the marketplace</h4>
+<p>AI should be embedded in the product to scope jobs, structure demand, improve routing, normalize pricing expectations, and compress time-to-value.</p>
+<h4>4. Increase customer engagement and build the operating system for homeowners</h4>
+<p>Over time, Checkatrade should expand from episodic jobs into broader household management: reminders, records, maintenance, rebooking, and adjacent needs.</p>
+
+<h2 id="b">B. Findings - Case study Part 1.1</h2>
+<div class="tldr-box">
+  <div class="tldr-label">TL;DR</div>
+  <ul>
+    <li>Demand likely needs to grow materially to hit the plan.</li>
+    <li>BOs per customer are too low relative to the household opportunity, the product is reactive, not proactive.</li>
+    <li>Low and deteriorating hire-rate is the clearest sign of value leakage in the messy middle.</li>
+    <li>The app is not yet a meaningfully better product surface.</li>
+    <li>The business should increasingly optimize for successful jobs completed, not just BO volume.</li>
+  </ul>
+</div>
+
+<h3 id="b1">B.1 Finding 1: top-of-funnel demand likely needs to grow materially</h3>
+<p>Checkatrade is targeting:</p>
+<ul>
+  <li>14% growth in consumer BOs</li>
+  <li>20% growth in overall revenue</li>
+  <li>20% growth in non-leads revenue</li>
+</ul>
+<p>Against that backdrop, the dummy data shows unique customers declining materially across the year. That may be partly seasonal, but it still raises a clear concern: the business will struggle to hit plan without either stronger demand growth or a meaningfully more efficient funnel.</p>
+<p>Two plausible explanations need testing:</p>
+<ul>
+  <li>Seasonality / mix: home services demand may be stronger in colder months or urgent categories (especially if Checkatrade is particularly strong in "winter" categories).</li>
+  <li>Acquisition fragility: Google-led acquisition may be becoming less effective at the margin as discovery fragments.</li>
+</ul>
+<p>Conclusion: Either way, Checkatrade likely needs both more demand and a more diversified demand engine. Potentially a more diversified supply/use cases to soften seasonality but on this the case study, I will focus on the demand side as insights I got during the interview process led me to believe that this should be a focus.</p>
+
+<h3 id="b2">B.2 Finding 2: BOs per customer are too low relative to the household opportunity</h3>
+<p>Homeowners likely have 10&ndash;15 home service needs per year across plumbing, electrical, boiler, garden, cleaning, and seasonal maintenance. BOs per customer on Checkatrade are flat and sit well below that. Checkatrade is winning first-job capture but losing wallet share.</p>
+<p>The gap is structural, not acquisition-driven. The current product is reactive: it waits for the homeowner to articulate a need rather than surfacing the needs their household is likely to have. Without property context or proactive prompts, every job starts from a cold start.</p>
+<p>Conclusion: more traffic will not close this gap. Lifting BOs per customer requires a shift from a reactive directory to a proactive household surface, which is also the precondition for becoming a homeowner OS.</p>
+
+<h3 id="b3">B.3 Finding 3: hire rates are too soft, and the biggest value leak is in the messy middle</h3>
+<p>Hire rate is the clearest conversion signal in the dataset. It falls materially over the year across web and app. Seasonality may explain part of that, but even allowing for that, the end-state hire rates look soft for what should be relatively high-intent BOs.</p>
+<p>This points to the messy middle:</p>
+<ul>
+  <li>poor scoping</li>
+  <li>weak routing</li>
+  <li>slow or inconsistent responses</li>
+  <li>unclear pricing expectations</li>
+  <li>insufficient trust at the point of decision</li>
+  <li>too much operational work left to the homeowners and trades</li>
+</ul>
+<p>Conclusion: the biggest improvement opportunity is not just more customers; it is better conversion from BO to hire.</p>
+
+<h3 id="b4">B.4 Finding 4: the app is not yet a meaningfully better product surface</h3>
+<p>App adoption is growing, which is encouraging. But the app does not yet appear to produce meaningfully better outcomes:</p>
+<ul>
+  <li>BOs per user are flat - in a world where homeowners have likely 10-15 use cases per year, the app does not show that it's contributing in winning homeowners wallet share</li>
+  <li>hire rate broadly tracks web</li>
+  <li>the app does not yet look like the clear home of a more guided, transactable, repeatable experience</li>
+</ul>
+<p>Conclusion: the app is an important product gap. If Checkatrade wants to build a managed marketplace and stronger repeat usage, the app should become the clearest expression of that future. While we are succeeding at driving more people to the app, we are failing at providing more value through the app.</p>
+
+<h2 id="c">C. Recommendations for the Core Business - Case study Part 1.2</h2>
+<div class="tldr-box">
+  <div class="tldr-label">TL;DR</div>
+  <ul>
+    <li>The core business should do two things over the next 12 months: protect the revenue engine and build the product/data foundations for a more managed marketplace.</li>
+    <li>That requires three priorities initiatives:
+      <ul>
+        <li>improve BO quality through better onboarding and intake</li>
+        <li>improve BO-to-hire conversion through better matching</li>
+        <li>Once the app proves better, shift more high-intent users from web into the app</li>
+      </ul>
+    </li>
+    <li>Given the limited visibility into the full funnel and cohort dynamics, I am grounding these recommendations in the available data, combined with product intuition and commercial judgment. With deeper funnel and cohort data, prioritization could be further refined.</li>
+  </ul>
+</div>
+
+<h3 id="c1">C.1 Initiative 1: Increase BOs by rebuilding app onboarding and intake as an AI-native problem-to-plan flow</h3>
+<h4>Why</h4>
+<p>When I download the app, onboarding is close to non existent and my first landing feels very generic/ non personalized. Equally, the intake flow puts too much of the scoping burden on the homeowner. In home services, users often do not know:</p>
+<ul>
+  <li>what trade they need</li>
+  <li>what details matter</li>
+  <li>whether the job is simple, urgent, diagnostic, or complex</li>
+</ul>
+
+<h4>Recommendation</h4>
+<p>Rebuild onboarding and turn intake into a job understanding and routing engine.</p>
+<p>Onboarding - For a successful homeowner activation, onboarding is crucial. Asking a few question about the type of property they own, can lead to a more personalized landing tailored to the upkeep of that specific property. If Checkatrade can say:</p>
+<ul>
+  <li>&ldquo;Homes like yours often need boiler servicing before winter&rdquo;</li>
+  <li>&ldquo;Victorian homes in your area commonly need gutter, damp, or roof checks&rdquo;</li>
+  <li>&ldquo;You have a garden and spring is coming up - would you like to book a garden tidy?&rdquo;</li>
+  <li>&ldquo;Based on your property type, here are common next jobs&rdquo;</li>
+</ul>
+<p>then the platform stops being reactive and becomes more proactive from day 1, minimizing the cold start problem.</p>
+<p>BO Intake - Not every job should go through the same path:</p>
+<ul>
+  <li>Fast path: simple, high-intent jobs recommended on the homepage</li>
+  <li>Guided path: ambiguous or higher-consideration jobs guided through AI search</li>
+  <li>Guides: for low-intent homeowners who don't know what trade they need and how to best maintain their property proactively before it gets late/expensive. We can leverage AI to personalize these and cover a high % of use cases</li>
+</ul>
+<p>Currently, I land on a non-personalized homescreen with random recommendations and a prompt to "save tradespeople I trust" (even though I have never used the app before) occupying prime real estate at the wrong time. The assistant is a good feature but the entry points for the various journeys to BO are unclear, non-personalized and overwhelming (homescreen, search bar at the top, 2 different entry points to the AI assistant). I would introduce onboarding, and simplify the UX to introduce personalization and focus on the high converting journeys which are likely to be homepage, search (which I would unify under AI search), and guides for lower intent users. The app needs to feel like my homeowner OS from the start.</p>
+<p>Crucially, this approach would have to be validated with quant and qual data that I currently do not have access to. This statement holds true for the other initiatives too but I will not repeat it every time.</p>
+
+<h4>Hypothesis</h4>
+<p>If Checkatrade guides users to what they need, helps them articulate the jobs more clearly and routes simple vs complex jobs differently, then we should get more, higher quality BOs.</p>
+
+<h4>Success metrics</h4>
+<ul>
+  <li>Traffic to BO conversion should increase</li>
+  <li>BOs per customer should increase</li>
+</ul>
+
+<h3 id="c2">C.2 Initiative 2: Increase hire rate by improving app matching and workflow routing</h3>
+<h4>Why</h4>
+<p>The goal is not to "match better" in the abstract. It is to get each BO into the supplier workflow that can digest it fastest and most effectively.</p>
+
+<h4>Recommendation</h4>
+<p>Create a workflow-aware routing layer.</p>
+<p>Classify jobs by digestibility:</p>
+<ul>
+  <li>instant-digest</li>
+  <li>structured quote</li>
+  <li>diagnostic</li>
+  <li>high-consideration / consultative</li>
+</ul>
+<p>Then route not just by supplier fit, but by:</p>
+<ul>
+  <li>workflow compatibility</li>
+  <li>urgency</li>
+  <li>need for site visit</li>
+  <li>likely response speed</li>
+  <li>likely conversion quality</li>
+</ul>
+<p>Package BOs better for suppliers:</p>
+<ul>
+  <li>structured job briefs</li>
+  <li>clearer urgency signals</li>
+  <li>better quality signals</li>
+  <li>simple action paths: accept, estimate, callback, diagnostic visit, decline</li>
+</ul>
+
+<h4>Hypothesis</h4>
+<p>If Checkatrade routes each BO into the supplier workflow that can absorb it most efficiently, then time-to-hire and hire rate will improve materially.</p>
+
+<h4>Minimum viable experiment</h4>
+<p>Start in a small number of categories:</p>
+<ul>
+  <li>classify BOs into workflow types</li>
+  <li>build routing logic for those types</li>
+  <li>improve trade ranking within each path</li>
+  <li>redesign supplier-facing BO packaging</li>
+  <li>launch lightweight response tools</li>
+</ul>
+
+<h4>Success metrics</h4>
+<ul>
+  <li>Hire rate should increase</li>
+  <li>Time to hire should decrease</li>
+  <li>Buyer and supplier experience should improve (measured through qual feedback and NPS)</li>
+</ul>
+<p style="margin-top:12px; padding:12px 16px; background:#f8fafc; border-left:3px solid var(--mid); font-size:13px; color:var(--mid); line-height:1.6;"><em>Funny story: I had a very direct reminder of the current product experience while testing Checkatrade. I posted a small job to replace a shower hose and quickly found myself juggling calls, texts, and emails from multiple trades. For a simple fix, it felt like a lot. When I admitted on one call that I was only testing the flow and did not actually need the job done, the tradesperson gave me a well-deserved telling-off and reminded me that they pay for those leads. It was funny, but it also made the problem very clear: too much noise for the homeowner, too much wasted effort for the trade. Better scoping, matching, and routing would improve both sides of that interaction.</em></p>
+
+<h3 id="c3">C.3 Initiative 3: Make the app the default platform for high-intent users once it proves superior economics</h3>
+<h4>Why</h4>
+<p>Initiatives 1 and 2 are designed to make the app meaningfully better: better onboarding, better BO creation, better routing, and better job management. Once that foundation is in place, Checkatrade should not treat web and app as equivalent surfaces. It should deliberately shift more high-intent users into the app.</p>
+<p>This matters because the app has the potential to become a structurally better platform for both conversion and retention. It can support:</p>
+<ul>
+  <li>more personalized onboarding</li>
+  <li>better BO creation and job management</li>
+  <li>richer trust and communication flows</li>
+  <li>stronger lifecycle and repeat usage</li>
+  <li>lower future acquisition costs through direct engagement</li>
+</ul>
+<p>Today, the app does not yet clearly outperform web. But if it begins to show:</p>
+<ul>
+  <li>higher traffic-to-BO conversion</li>
+  <li>higher hire rate</li>
+  <li>higher repeat usage</li>
+  <li>higher LTV per user</li>
+</ul>
+<p>then moving more high-intent demand into the app becomes a strategic priority, not just a growth tactic.</p>
+
+<h4>Recommendation</h4>
+<p>Treat web as the broad discovery and capture layer, and the app as the default operating environment for high-intent homeowners.</p>
+<p>The shift should happen only once the app proves superior economics in selected journeys and categories. At that point, Checkatrade should deliberately migrate users into the app at moments where persistence, trust, and repeat interaction matter most.</p>
+<p>The goal is not to maximize app downloads. It is to migrate the right users into the right surface.</p>
+<p>The highest-value moments for migration are likely to be:</p>
+<ul>
+  <li>immediately after first BO creation</li>
+  <li>when a homeowner starts receiving responses and needs to compare options</li>
+  <li>when messaging, tracking, or trust matter more</li>
+  <li>after job completion, when rebooking, records, or reminders become relevant</li>
+</ul>
+<p>The strategic logic is simple:</p>
+<ul>
+  <li>web is the acquisition and discovery layer</li>
+  <li>app becomes the conversion, trust, and retention layer</li>
+</ul>
+<p>That is how Checkatrade starts turning episodic traffic into a more durable homeowner relationship.</p>
+
+<h4>Hypothesis</h4>
+<p>If Checkatrade makes the app meaningfully better than web for high-intent journeys, and then deliberately shifts those users into the app at the right moments, then BO conversion, hire rate, and LTV per user will improve because the app is a better surface for trust, persistence, and repeat engagement.</p>
+
+<h4>Minimum viable experiment</h4>
+<p>I would test this in the same priority categories used in initiatives 1 and 2.</p>
+<p>The first wave should focus on a few high-intent migration points:</p>
+<ul>
+  <li>prompt web users to continue in app after BO creation</li>
+  <li>move quote / response management into the app</li>
+  <li>make job tracking and messaging more valuable in app</li>
+  <li>introduce app-specific persistence such as saved job history, reminders, and easier rebooking</li>
+</ul>
+<p>The goal of the MVP is not to maximize install rate. It is to prove that users who move into the app perform better than comparable users who stay on web.</p>
+
+<h4>Success metrics</h4>
+<p>I would measure this initiative on:</p>
+<ul>
+  <li>web-to-app migration rate</li>
+  <li>BO conversion rate for migrated users vs web-only users</li>
+  <li>hire rate for migrated users vs web-only users</li>
+  <li>repeat usage / rebooking rate</li>
+  <li>LTV per migrated user</li>
+</ul>
+
+<h4>Capital allocation</h4>
+<p>This should remain the third priority, but only after the app begins to prove better economics in the core journeys improved by initiatives 1 and 2.</p>
+<p>The sequencing matters:</p>
+<ul>
+  <li>first, make the app better</li>
+  <li>second, prove it converts and retains better</li>
+  <li>third, shift more high-intent users into it</li>
+</ul>
+<p>This is not a channel tactic. It is a platform shift. The app should earn the right to become the primary surface for high-intent homeowners by outperforming web on conversion, retention, and lifetime value.</p>
+
+<h3 id="c4">C.4 Why these bets matter beyond the core business</h3>
+<p>These are core-business initiatives, but they also build the infrastructure for Express:</p>
+<ul>
+  <li>Initiative 1 creates more structured, higher-quality demand and determines the right service path.</li>
+  <li>Initiative 2 improves matching, routing, and supplier-side conversion, creating the bridge between lead gen and marketplace.</li>
+  <li>Initiative 3 turns the app into the default platform for high-intent homeowners once it proves better economics, strengthening trust, retention, and the path to a homeowner operating system.</li>
+</ul>
+<p>This is not "optimize the old business." It is the first stage of rebuilding Checkatrade as a smarter, more transactable marketplace.</p>
+
+<h2 id="d">D. Managed Marketplace / Express: 12-Month Growth Strategy - Case study Part 2</h2>
+<div class="tldr-box">
+  <div class="tldr-label">TL;DR</div>
+  <ul>
+    <li>Assuming we are starting from zero - scale Express supply-first inside existing demand pools.</li>
+    <li>Start in constrained categories and dense cities; prove reliability before breadth.</li>
+    <li>Design the product to reduce disintermediation from day one.</li>
+    <li>Organize Express as a real business pod, not a side project.</li>
+  </ul>
+</div>
+
+<h3 id="d1">D.1 Express should be treated as the wedge into a more managed marketplace</h3>
+<p>Express matters because it is how Checkatrade learns to monetize outcomes, not just introductions.</p>
+<p>The goal over the next 12 months is to prove that, in selected categories, a managed marketplace can deliver, then scale:</p>
+<ul>
+  <li>faster time-to-outcome</li>
+  <li>higher hire rates</li>
+  <li>higher frequency of use</li>
+  <li>stronger unit economics</li>
+</ul>
+
+<h3 id="d2">D.2 GTM strategy - Case study Part 2.1</h3>
+<h4>Recommendation</h4>
+<p>The following recommendation is based on the case-study assumption that Express is being launched from zero. In practice, I would not apply a blanket "supply first" rule across the board. I would assess each market at the category &times; city level, because the right GTM depends on where the constraint sits. Some markets will be healthy, with enough demand and enough supply, in which case the focus should be on routing, conversion, and proving the managed value proposition. Some will be supply-constrained, with strong demand but insufficient density or workflow-ready trades, in which case the priority should be targeted supply acquisition, activation, and possibly short-term supplier incentives to improve customer experience. Others will be demand-constrained, where supply exists but demand is too thin, in which case the better move is to increase demand through better routing from the core business, selective acquisition, lifecycle reactivation, or adjacent-job generation rather than over-investing in more supply. Finally, some market cells will simply be unhealthy, with low demand and low supply, and those should not be early Express priorities at all. So while "supply first" (and leveraging existing demand) is the right default for a zero-to-one launch, the real operating model should be much more granular: diagnose the health of each category x city, identify whether demand or supply is the bottleneck, and then choose the GTM motion accordingly.</p>
+<p>For the sake of this case study, if existing demand and supply which is a good fit for Express use cases exist, leverage them. If not, prioritize supply first within existing demand pools.</p>
+<p>That means:</p>
+<ul>
+  <li>start with existing Checkatrade users, trades, and categories where possible</li>
+  <li>focus on 1-3 dense geographies</li>
+  <li>launch in a small number of highly digestible categories</li>
+  <li>build the operating model there first</li>
+  <li>expand only once hire rates, reliability, and contribution economics are proven</li>
+</ul>
+
+<h4>Why supply first</h4>
+<p>Leverage the existing user base and homeowners acquisition engine for the core business (assuming this can generate enough relevant demand for the selected categories to test) and focus on acquiring trades that are fit for purpose for the Express test (eg high urgency and frequency use cases). If these types of trades are already available on the core business, then we should start with a proof of concept that introduces new use cases leveraging existing demand and existing supply. Basically keep both sides of the marketplace stable, then start expanding one side at a time (supply first).</p>
+
+<h4>Category criteria</h4>
+<p>Start in categories that are:</p>
+<ul>
+  <li><strong>urgent or relatively frequent</strong> &ndash; creates repeat use, drives density, and surfaces supply/demand mismatches quickly</li>
+  <li><strong>narrow enough to standardize</strong> &ndash; the job can be defined, priced, and quality-checked against a consistent template</li>
+  <li><strong>easy enough to scope remotely</strong> &ndash; the homeowner can describe the job, send a photo, or answer a few structured questions, and the trade can commit without a site visit first. Essential for a fast, managed promise</li>
+  <li><strong>operationally manageable</strong> &ndash; Checkatrade can actually run the end-to-end operating layer (dispatch, SLAs, QA, complaints, payments) without every job turning into a bespoke escalation</li>
+  <li><strong>attractive enough to support a take rate</strong> &ndash; unit economics leave enough margin for a transaction fee after trade payout</li>
+</ul>
+<p>Likely candidates:</p>
+<ul>
+  <li>plumbing fixes</li>
+  <li>electrical callouts</li>
+  <li>boiler / heating subcategories</li>
+  <li>drainage / unblocks</li>
+  <li>cleaning</li>
+  <li>gardening</li>
+  <li>selected handyman jobs</li>
+</ul>
+<p>Avoid starting with bespoke, consultative projects like major renovations.</p>
+
+<h4>Assumption</h4>
+<p>This strategy assumes the current demand engine can generate enough relevant demand for the selected categories. If that proves false, demand acquisition for Express will need to play a larger role earlier.</p>
+
+<h3 id="d3">D.3 Marketing &amp; Growth Engine: Increase customers by building a diversified, payback-disciplined demand engine - Case study Part 2.2a</h3>
+<h4>Recommendation</h4>
+<p>For Express, I would allocate capital with one clear principle:</p>
+<p>Use channels that let Checkatrade capture high-intent demand efficiently, while staying disciplined enough not to scale faster than supply quality and fulfillment reliability allow.</p>
+<p>So this is not a "spend across every channel" strategy. It is a staged capital allocation plan designed to:</p>
+<ul>
+  <li>build early momentum</li>
+  <li>prove the managed value proposition</li>
+  <li>avoid inefficient acquisition before the product and supply side are ready</li>
+</ul>
+<p>Because I do not yet have the supply/demand health data by category &times; geography, I am giving a demand allocation framework based on the interview context and case materials. In practice, I would refine this by city and category depending on where the real bottleneck sits.</p>
+
+<h4>My capital allocation bias</h4>
+<p>If I were allocating incremental marketing capital for Express, my default mix would be:</p>
+<ul>
+  <li>Core-to-Express routing + CRM / direct / app reactivation: highest immediate focus</li>
+  <li>Organic demand capture (SEO, AI search, content, organic social): first major external growth lever</li>
+  <li>Brand / PR / trust-led awareness: sustained supporting investment</li>
+  <li>Influencer / affiliate / partnership tests: selective pilot budget</li>
+  <li>Paid search / performance media: tightly constrained, scaled only where payback is proven</li>
+</ul>
+<p>I would explain the mix this way:</p>
+
+<h4>1. Start with owned demand: core-to-Express routing, CRM, app, and direct reactivation</h4>
+<p>This should be the first and cheapest source of momentum.</p>
+<p>Before spending heavily on external channels, Checkatrade should use:</p>
+<ul>
+  <li>existing traffic</li>
+  <li>existing homeowner relationships</li>
+  <li>CRM</li>
+  <li>app/web surfaces</li>
+  <li>lifecycle prompts</li>
+</ul>
+<p>to push the right jobs into Express.</p>
+<p>Why:</p>
+<ul>
+  <li>lowest CAC</li>
+  <li>fastest learning loop</li>
+  <li>easiest way to compare Express vs lead gen performance</li>
+  <li>best way to avoid scaling a marketplace before supply is ready</li>
+</ul>
+<p>This is not just a launch tactic. It is the cleanest way to seed the marketplace with high-intent demand while learning where the managed value proposition is strongest.</p>
+
+<h4>2. Make organic the first major external growth lever</h4>
+<p>If the product and supply side are working, this would be my first scale channel.</p>
+<p>But "organic" should be defined broadly:</p>
+<ul>
+  <li>Google SEO</li>
+  <li>AI search / answer-engine discoverability</li>
+  <li>organic social</li>
+  <li>over time, referrals if the product becomes strong enough to support them</li>
+</ul>
+<p>The key shift is from keyword research to query-universe research: understanding how users describe household problems across search, social, and LLMs before they are ready to hire someone.</p>
+<p>That should feed a scalable content engine built through agentic workflows. The goal is not generic SEO volume. It is high-intent, structured content that captures real household needs and routes users into better BO creation flows.</p>
+<p>The reason I would bias toward organic is simple: AI has changed the economics of going after the long tail. More queries are now economically worth serving, especially if Checkatrade can create content and landing flows efficiently.</p>
+
+<h4>3. Maintain and selectively increase brand / PR investment</h4>
+<p>I would not treat brand as soft spend. In a more AI-mediated world, it becomes more important, not less.</p>
+<p>As discovery compresses into fewer surfaced options, trusted brands gain disproportionate advantage. In home services, brand does more than create awareness:</p>
+<ul>
+  <li>it increases confidence at the moment of hire</li>
+  <li>strengthens direct demand over time</li>
+  <li>makes users more willing to let the platform manage more of the workflow</li>
+</ul>
+<p>So I would continue investing in:</p>
+<ul>
+  <li>PR</li>
+  <li>trust-building creative content</li>
+  <li>category education</li>
+  <li>selected awareness channels such as TV and, where justified, OOH</li>
+  <li>stronger brand-to-demand integration</li>
+</ul>
+<p>The key is to measure brand properly and treat it as a multiplier on demand efficiency, not a disconnected top-of-funnel budget.</p>
+
+<h4>4. Run trust-led channel tests: influencers, affiliates, partnerships</h4>
+<p>These should be pilot channels, not immediate scale bets.</p>
+<p>I would selectively test:</p>
+<ul>
+  <li>influencers</li>
+  <li>affiliates</li>
+  <li>partnerships</li>
+</ul>
+<p>These channels are attractive because home services is a trust-sensitive category. In the right categories, creator-led or partner-led acquisition may outperform more transactional channels. Influencers are also gaining importance again in an AI-shaped world because user-generated content and trusted third-party commentary are increasingly surfaced in AI discovery flows.</p>
+<p>If these channels start to work, I would then use agentic workflows to reduce the cost of operating them:</p>
+<ul>
+  <li>creator / partner identification</li>
+  <li>segmentation</li>
+  <li>outreach</li>
+  <li>offer testing</li>
+  <li>Activation</li>
+  <li>Re-activation</li>
+</ul>
+<p>That matters because these channels often fail economically when they are run manually at too small a scale.</p>
+
+<h4>5. Re-underwrite paid media rather than assume it should scale</h4>
+<p>Paid should be treated as a portfolio, not a default growth answer.</p>
+<p>Some categories may still justify meaningful paid investment:</p>
+<ul>
+  <li>urgent jobs</li>
+  <li>highly monetizable jobs</li>
+  <li>categories with strong conversion and clear supply readiness</li>
+</ul>
+<p>Others may be overfunded or structurally less resilient.</p>
+<p>So the right question is not "should we use PPC?" It is:</p>
+<ul>
+  <li>where should we double down</li>
+  <li>where should we hold flat</li>
+  <li>where should we test</li>
+  <li>where should we pull back</li>
+</ul>
+<p>I would avoid using paid to cover up weak supply density or poor fulfillment. That is how marketplaces burn capital and damage the customer experience.</p>
+
+<h4>Suggested staged allocation</h4>
+<p>Without granular city/category data, I would not pretend to know the exact mix. But my default staged mix would look something like:</p>
+<p>The case study assumes we are launching from scratch. In reality, initially there should be a phase 0 to diagnose and identify where the next marginal pound should go based on the current core business growth engine,</p>
+<p><strong>Phase 1: launch and learn</strong></p>
+<ul>
+  <li>40&ndash;50% owned demand: routing from core, CRM, app, direct</li>
+  <li>20&ndash;25% organic / content / AI-search capture</li>
+  <li>15&ndash;20% brand / PR / trust messaging</li>
+  <li>5&ndash;10% influencer / affiliate / partnership pilots</li>
+  <li>10&ndash;15% selective paid search</li>
+</ul>
+<p><strong>Phase 2: once supply readiness and conversion are proven</strong></p>
+<p>Shift more capital toward:</p>
+<ul>
+  <li>organic and brand if they are compounding efficiently</li>
+  <li>selective paid in categories where payback is proven</li>
+  <li>scaling influencers / affiliates only if the pilots show strong unit economics</li>
+</ul>
+<p>I would not lock into these percentages without better data, but this is the directional bias I would take.</p>
+
+<h4>Hypothesis</h4>
+<p>If Checkatrade builds a diversified Express demand portfolio, starting with owned demand, then scaling organic, brand, and selected trust-led channels, while keeping paid tightly constrained, then it can build momentum efficiently without outrunning supply readiness or diluting payback.</p>
+
+<h4>How I would measure success</h4>
+<p>I would measure this initiative on:</p>
+<ul>
+  <li>Unique-customers increase</li>
+  <li>CAC decreases</li>
+  <li>Payback by channel and category improves</li>
+</ul>
+<p>The key is not just volume. It is whether each channel is producing qualified demand that the marketplace can fulfill profitably and reliably.</p>
+
+<h4>Bottom line</h4>
+<p>My bias would be:</p>
+<ul>
+  <li>first dollars into owned demand, measurement, and organic capture</li>
+  <li>second dollars into brand preservation and selective scaling</li>
+  <li>pilot dollars into influencers / affiliates / partnerships</li>
+  <li>paid scaled only where payback is proven</li>
+</ul>
+<p>In other words: do not try to buy momentum before the product and supply side are ready. First prove the economics of each managed job. Then scale the channels that can add demand without breaking them.</p>
+
+<h3 id="d4">D.4 Sustainable growth loop: a data network effect - Case study Part 2.2b</h3>
+<h4>Recommendation</h4>
+<p>The growth loop I am proposing is, fundamentally, a <strong>data network effect</strong>: every successful job makes the platform more intelligent, which makes the next job better for both sides, which drives more volume, which produces more data. Build it around: Successful jobs completed &gt; better trust and performance data &gt; better household intelligence and routing &gt; more repeat usage and referrals on both sides &gt; lower paid dependence</p>
+<p>Successful jobs should generate:</p>
+<ul>
+  <li>better supplier performance data</li>
+  <li>better pricing / duration / conversion benchmarks</li>
+  <li>better understanding of the household and likely future needs</li>
+</ul>
+<p>Then use AI-first homeowner profiling and household memory to make repeat usage easier.</p>
+<p>A lightweight home profile should get richer over time:</p>
+<ul>
+  <li>property type</li>
+  <li>age of home</li>
+  <li>boiler / heating / roof / windows / drainage context</li>
+  <li>previous jobs</li>
+  <li>recurring needs</li>
+  <li>likely future maintenance</li>
+</ul>
+<p>This enables:</p>
+<ul>
+  <li>better personalization</li>
+  <li>proactive reminders</li>
+  <li>easier repeat booking</li>
+  <li>smarter routing</li>
+  <li>lower transaction cost on future jobs</li>
+</ul>
+<p>On the other side of the marketplace, better trade workflows should lead to suppliers wanting to do more jobs on the Checkatrade OS, which should become more convenient that doing it off platform.</p>
+<p>This is the data network effect at work: the platform becomes more useful with every job completed, ideally on both sides of the marketplace, which is what unlocks the full power of referrals. Referrals should flow <strong>buyer to buyer</strong> (homeowners recommending the platform to other homeowners) and, where the OS value proposition is strong enough on the supply side, <strong>seller to buyer</strong> too (trades actively pointing their own customers back into Checkatrade because doing the job on-platform is more convenient than off it). This is also one of the strongest defenses against disintermediation.</p>
+<p>If we wanted to think about growth loops in a more wholistic way (not just one loop), and if I had more time to gather more data and draft a whole document on this, I would approach this task using the following framework - using tools that I have develop with my teams over time:</p>
+
+<table style="margin:16px 0;">
+  <thead>
+    <tr>
+      <th>Question</th>
+      <th>Deliverable</th>
+      <th>Tool</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Define</strong> - How does Checkatrade grow?</td><td>Growth Model</td><td>Growth Loop Menu</td></tr>
+    <tr><td><strong>Identify</strong> - What are the points of leverage? Where and when does the current growth stop?</td><td>Growth Constraint + Growth Horizon</td><td>Loop Quant Model</td></tr>
+    <tr><td><strong>Choose</strong> - How do we improve the constraint or horizon?</td><td>Growth Method</td><td>Growth Method Menu. Loop Property Map</td></tr>
+    <tr><td><strong>Communicate</strong> - How do I align individuals, teams, and Checkatrade?</td><td>Growth Principles</td><td>Strategy Communication Deck</td></tr>
+    <tr><td><strong>Observe</strong> - What new info do I have that will change the strategy</td><td>Growth Catalysts</td><td>Strategy Diagnosis</td></tr>
+  </tbody>
+</table>
+
+<h3 id="d5">D.5 Team structure - Case study Part 2.3</h3>
+<h4>Recommendation</h4>
+<p>Organize around dedicated business pods with shared intelligence layers.</p>
+
+<h4>Growth pod</h4>
+<p><em>Mission: get as many homeowners and trades as possible to experience Checkatrade's core value, as frequently as possible.</em></p>
+<p>Owns:</p>
+<ul>
+  <li>homeowner acquisition and activation</li>
+  <li>trade acquisition and activation</li>
+  <li>app and web growth surfaces</li>
+  <li>lifecycle and CRM</li>
+  <li>homeowner engagement and repeat usage</li>
+</ul>
+<p>Primary KPI: BOs Created &emsp; Secondary KPI: CAC / Payback Period</p>
+
+<h4>Express / Managed Marketplace pod</h4>
+<p><em>Mission: deliver reliable, high-trust outcomes in selected categories at profitable unit economics &mdash; turning BOs into completed managed jobs.</em></p>
+<p>Owns:</p>
+<ul>
+  <li>category launch sequencing</li>
+  <li>supply quality and density in managed categories</li>
+  <li>pricing</li>
+  <li>fulfillment reliability</li>
+  <li>trust, reputation, and guarantees in managed flows</li>
+  <li>the tradespeople operating system</li>
+  <li>the homeowner operating system inside managed flows</li>
+</ul>
+<p>Primary KPI: Hired to Job Completed Rate &emsp; Secondary KPI: Contribution Margin per Managed Job</p>
+
+<h4>Marketplace Intelligence &amp; Platform pod</h4>
+<p><em>Mission: convert every BO into the right hire as quickly as possible by owning intake, matching, and the shared AI/data layer the other pods run on.</em></p>
+<p>Owns:</p>
+<ul>
+  <li>intake and job scoping</li>
+  <li>matching and routing</li>
+  <li>AI-native decisioning systems</li>
+  <li>experimentation infrastructure</li>
+  <li>shared event and data layer powering Growth and Express</li>
+</ul>
+<p>Primary KPI: Hire Rate &emsp; Secondary KPI: Time to Hire</p>
+
+<h4>Shared / company-level metric</h4>
+<ul>
+  <li>All pods: Successful Jobs Completed &mdash; this is the long-term north star, but the transition away from a BO-volume orientation should be gradual. The current revenue engine is still monetizing introductions, and that P&amp;L needs to be protected while Express proves the managed model. In practice, BOs Created and Successful Jobs Completed should both be tracked at the top level during the transition, with weighting shifting toward outcomes as managed-job volume, reliability, and contribution margin scale.</li>
+</ul>
+
+<h4>How teams should work together</h4>
+<p>Run Checkatrade as a hybrid AI-native growth organization:</p>
+<ul>
+  <li>Product and marketing report into the growth leader</li>
+  <li>Engineering, data, and design report into central functional leaders</li>
+  <li>engineering, data, and design are embedded in the pods with dedicated day-to-day capacity</li>
+</ul>
+<p>This is the right structure because the strategic bets cut across product and marketing, while engineering, data, and design still need shared standards and infrastructure.</p>
+
+<h4>Why this structure fits the four strategic bets</h4>
+<ul>
+  <li>Go deeper with supply: Growth acquires and activates trades; Express deepens supply quality and tooling.</li>
+  <li>Move up the management stack: Express owns the managed model.</li>
+  <li>Build AI natively into the marketplace: Marketplace Intelligence owns intake, routing, and decisioning.</li>
+  <li>Increase customer engagement / homeowner OS: Growth and Express jointly own repeat usage and richer household workflows.</li>
+</ul>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 2: STRATEGIC CONTEXT -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-context">
+
+  <div class="section-intro">
+    <strong>Core thesis:</strong> Checkatrade's future is not a better directory. It is a homeowner OS and a trade OS. Defensibility will concentrate in hard-to-replicate supply, higher levels of marketplace management, and deeper customer engagement.
+  </div>
+
+  <!-- Positioning shift -->
+  <div class="framework">
+    <div class="framework-title">The Strategic Shift</div>
+    <div class="shift-visual">
+      <div class="shift-box from">
+        <div class="shift-label">Today</div>
+        <div class="shift-title">Directory / Lead Gen</div>
+        <div class="shift-desc">Monetizes introductions. Traffic-dependent. Episodic usage. Value leaks in the messy middle.</div>
+      </div>
+      <div class="shift-arrow">&rarr;</div>
+      <div class="shift-box to">
+        <div class="shift-label">Future</div>
+        <div class="shift-title">Managed Operating Layer</div>
+        <div class="shift-desc">Monetizes outcomes. Owns scoping, matching, trust, payments, fulfillment. Ongoing relationship on both sides.</div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:12px;">
+      <div style="display:inline-flex; gap:24px; font-size:13px; color:var(--mid);">
+        <span><strong>Homeowner side:</strong> Household operating system</span>
+        <span style="color:var(--border);">|</span>
+        <span><strong>Trade side:</strong> Growth operating system</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-Pillar assessment -->
+  <div class="framework">
+    <div class="framework-title">Marketplace Defensibility Assessment</div>
+    <p style="font-size:13px; color:var(--mid); margin-bottom:18px;">In an AI-shaped market, winners will aggregate hard-to-replicate supply, manage more of the workflow, and give customers a reason to come back directly.</p>
+    <div class="pillars">
+      <div class="pillar" style="border-top: 4px solid var(--green);">
+        <div class="pillar-label">Supply Aggregation</div>
+        <div class="pillar-score" style="color:var(--green);">Strong</div>
+        <span class="badge badge-green">Foundation in place</span>
+        <div class="pillar-desc">Real advantages in brand, vetting, and scale. Local trade supply is fragmented and hard to replicate. Gap: supply not yet legible in real time for matching.</div>
+      </div>
+      <div class="pillar" style="border-top: 4px solid var(--red);">
+        <div class="pillar-label">Marketplace Management</div>
+        <div class="pillar-score" style="color:var(--red);">Weak</div>
+        <span class="badge badge-red">Biggest gap / biggest upside</span>
+        <div class="pillar-desc">Lead gen is the least defensible end of the spectrum. No ownership of scoping, pricing, payments, guarantees, or delivery. This is where AI matters most.</div>
+      </div>
+      <div class="pillar" style="border-top: 4px solid var(--amber);">
+        <div class="pillar-label">Customer Engagement</div>
+        <div class="pillar-score" style="color:var(--amber);">Exposed</div>
+        <span class="badge badge-amber">At risk without action</span>
+        <div class="pillar-desc">Low-frequency, episodic. Vulnerable to AI intermediaries unless the platform broadens into household management, maintenance, and trade business tools.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector-section">
+    <span class="arrow">&darr;</span>
+    These gaps define the four strategic bets
+  </div>
+
+  <!-- 4 Strategic Bets -->
+  <div class="framework">
+    <div class="framework-title">Four Strategic Bets</div>
+    <div class="bets-grid">
+      <div class="bet-card">
+        <div class="bet-num">Bet 1</div>
+        <div class="bet-title">Go deeper with supply by becoming the operating system for tradespeople</div>
+        <div class="bet-desc">Checkatrade should deepen its supply moat by helping trades manage demand, workflow, availability, reputation, pricing signals, and repeat business.</div>
+      </div>
+      <div class="bet-card">
+        <div class="bet-num">Bet 2</div>
+        <div class="bet-title">Move up the marketplace management stack</div>
+        <div class="bet-desc">The company should do the things AI layers will not do well on their own: guarantees, booking reliability, payments, credit, dispute resolution, trust, and selected managed fulfillment.</div>
+      </div>
+      <div class="bet-card">
+        <div class="bet-num">Bet 3</div>
+        <div class="bet-title">Build AI natively into the marketplace</div>
+        <div class="bet-desc">AI should be embedded in the product to scope jobs, structure demand, improve routing, normalize pricing expectations, and compress time-to-value.</div>
+      </div>
+      <div class="bet-card">
+        <div class="bet-num">Bet 4</div>
+        <div class="bet-title">Increase customer engagement and build the operating system for homeowners</div>
+        <div class="bet-desc">Over time, Checkatrade should expand from episodic jobs into broader household management: reminders, records, maintenance, rebooking, and adjacent needs.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 3: FINDINGS DASHBOARD -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-findings">
+
+  <div class="section-intro">
+    Four diagnostic findings from the case study data. The business should increasingly optimize for <strong>successful jobs completed</strong>, not just BO volume. The two marked <strong style="color:var(--red);">High severity</strong> are the two most critical problems in the core consumer funnel to investigate first (see prioritization model).
+  </div>
+
+  <div class="card" style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:20%;">Finding</th>
+          <th style="width:8%;">Severity</th>
+          <th style="width:24%;">Evidence</th>
+          <th style="width:24%;">Root Cause Hypothesis</th>
+          <th style="width:24%;">Implication</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong style="color:var(--navy);">1. Demand growth gap</strong><br>
+            <span style="font-size:12px; color:var(--mid);">Top-of-funnel likely needs to grow materially</span>
+          </td>
+          <td><span class="badge badge-red">High</span></td>
+          <td>Unique customers declining materially across the year, against targets of 14% BO growth and 20% revenue growth.</td>
+          <td>Seasonality / mix effects, and potential acquisition fragility as Google-led acquisition becomes less effective at the margin.</td>
+          <td>Needs both more demand and a more diversified demand engine. Cannot rely on existing acquisition channels alone to hit plan.</td>
+        </tr>
+        <tr>
+          <td>
+            <strong style="color:var(--navy);">2. BOs per customer gap</strong><br>
+            <span style="font-size:12px; color:var(--mid);">Winning first-job capture, losing wallet share</span>
+          </td>
+          <td><span class="badge badge-amber">Medium</span></td>
+          <td>BOs per customer are flat and sit well below the likely 10&ndash;15 home service needs a household has per year.</td>
+          <td>Product is reactive, not proactive. No property context or proactive prompts, every job starts from a cold start.</td>
+          <td>More traffic will not close this gap. Requires a shift from reactive directory to proactive household surface, precondition for homeowner OS.</td>
+        </tr>
+        <tr>
+          <td>
+            <strong style="color:var(--navy);">3. Hire rate leakage</strong><br>
+            <span style="font-size:12px; color:var(--mid);">Biggest value leak is in the messy middle</span>
+          </td>
+          <td><span class="badge badge-red">High</span></td>
+          <td>Hire rate falls materially over the year across both web and app. End-state hire rates soft for what should be high-intent BOs.</td>
+          <td>Poor scoping, weak routing, slow / inconsistent responses, unclear pricing expectations, insufficient trust at decision point, too much work left to users.</td>
+          <td>The biggest improvement opportunity is better BO-to-hire conversion, not just more top-of-funnel volume. The messy middle is where value leaks.</td>
+        </tr>
+        <tr>
+          <td>
+            <strong style="color:var(--navy);">4. App product gap</strong><br>
+            <span style="font-size:12px; color:var(--mid);">App not yet a better product surface</span>
+          </td>
+          <td><span class="badge badge-amber">Medium</span></td>
+          <td>App adoption growing but BOs per user flat, hire rate tracks web. App does not yet deliver a more guided, transactable, repeatable experience.</td>
+          <td>Weak onboarding, non-personalized homescreen, unclear entry points, no meaningful UX advantage over web for core journeys.</td>
+          <td>The app is critical to the managed marketplace future but must earn the right to be the primary surface by proving superior economics first.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="framework">
+    <div class="framework-title">Scenario Model: Which Levers Actually Move the +14% BO Target</div>
+    <div style="font-size:13px; color:var(--mid); margin-bottom:14px; line-height:1.5;">
+      Hires = Customers &times; BOs/User &times; Hire Rate. Baseline FY run-rate &approx; 2,456k hires. Each scenario isolates one lever (or a combination) and holds the others constant to show the annualized hire impact vs. baseline.
+    </div>
+    <table class="matrix" style="margin-bottom:14px;">
+      <thead>
+        <tr>
+          <th style="width:34%;">Scenario</th>
+          <th>Customers (k)</th>
+          <th>BOs / User</th>
+          <th>Hire Rate</th>
+          <th>FY Hires (k)</th>
+          <th>Lift vs. Baseline</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Baseline</strong> (current exit run-rate)</td>
+          <td>2,743</td>
+          <td>1.55</td>
+          <td>57.7%</td>
+          <td><strong>2,456</strong></td>
+          <td style="color:var(--mid);">0.0%</td>
+        </tr>
+        <tr>
+          <td><strong>A.</strong> Fix demand (hold M1 peak all year)</td>
+          <td>3,331</td>
+          <td>1.55</td>
+          <td>57.7%</td>
+          <td><strong>2,982</strong></td>
+          <td style="color:var(--green); font-weight:600;">+21.4%</td>
+        </tr>
+        <tr>
+          <td><strong>B.</strong> Fix BOs/user (lift to 2.5)</td>
+          <td>2,743</td>
+          <td>2.50</td>
+          <td>57.7%</td>
+          <td><strong>3,957</strong></td>
+          <td style="color:var(--green); font-weight:600;">+61.1%</td>
+        </tr>
+        <tr>
+          <td><strong>C.</strong> Fix hire rate (restore to M1 peak 71.3%)</td>
+          <td>2,743</td>
+          <td>1.55</td>
+          <td>71.3%</td>
+          <td><strong>3,035</strong></td>
+          <td style="color:var(--green); font-weight:600;">+23.6%</td>
+        </tr>
+        <tr>
+          <td><strong>D.</strong> Fix app (app BOs/user lifts blended +5%)</td>
+          <td>2,743</td>
+          <td>1.63</td>
+          <td>57.7%</td>
+          <td><strong>2,579</strong></td>
+          <td style="color:var(--amber); font-weight:600;">+5.0%</td>
+        </tr>
+        <tr style="background:var(--amber-bg);">
+          <td><strong>E.</strong> Combined A + C (fix demand AND hire rate)</td>
+          <td>3,331</td>
+          <td>1.55</td>
+          <td>71.3%</td>
+          <td><strong>3,686</strong></td>
+          <td style="color:var(--green); font-weight:700;">+50.1%</td>
+        </tr>
+        <tr style="background:#dbeafe;">
+          <td><strong>F.</strong> A + C calibrated to the +14% BO plan target</td>
+          <td>2,935</td>
+          <td>1.55</td>
+          <td>61.4%</td>
+          <td><strong>2,799</strong></td>
+          <td style="color:var(--accent); font-weight:700;">+14.0%</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+      <div style="background:var(--bg); border-left:3px solid var(--red); padding:12px 14px; border-radius:4px;">
+        <div style="font-size:12px; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:0.3px; margin-bottom:6px;">Interpretation</div>
+        <div style="font-size:13px; color:var(--dark); line-height:1.5;">
+          Fixing <strong>demand (A)</strong> and <strong>hire rate (C)</strong> each individually unlock double-digit hire uplift. Both are problems clearly visible in the data, and together (Scenario E) they more than double vs. the current exit run-rate. That is why B.1 and B.3 are the HIGH severity priorities.
+        </div>
+      </div>
+      <div style="background:var(--bg); border-left:3px solid var(--amber); padding:12px 14px; border-radius:4px;">
+        <div style="font-size:12px; font-weight:700; color:var(--amber); text-transform:uppercase; letter-spacing:0.3px; margin-bottom:6px;">Why B.2 and B.4 are Medium</div>
+        <div style="font-size:13px; color:var(--dark); line-height:1.5;">
+          <strong>BOs/user (B)</strong> looks largest in absolute terms, but requires a product rebuild into a homeowner OS and the trend is already positive - not an acute funnel fix. <strong>App (D)</strong> only contributes &sim;+5% because the app is only &sim;18% of customers today; critical strategically, but not the biggest 12-month hire lever.
+        </div>
+      </div>
+      <div style="background:var(--bg); border-left:3px solid var(--accent); padding:12px 14px; border-radius:4px; grid-column: span 2;">
+        <div style="font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.3px; margin-bottom:6px;">Calibrating to the plan: Scenario F</div>
+        <div style="font-size:13px; color:var(--dark); line-height:1.5;">
+          A balanced <strong>+7% customer growth</strong> combined with <strong>+6.5% hire rate recovery</strong> clears the <strong>+14% BO YoY plan target</strong> (assuming flat BOs/user). More achievable than the aggressive &quot;restore both to M1 peak&quot; E scenario, and it defines the quantitative bar for the H1 operating plan: acquisition efficiency and conversion recovery share the load roughly equally.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 4: CORE BUSINESS ROADMAP -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-core">
+
+  <div class="section-intro">
+    <strong>Dual mandate:</strong> Protect the revenue engine <em>and</em> build the product/data foundations for a more managed marketplace. Three sequenced initiatives, each enables the next.
+  </div>
+
+  <div style="background:#fff7ed; border:1px solid #fdba74; border-left:4px solid var(--amber); border-radius:6px; padding:14px 18px; margin-bottom:22px; font-size:13px; color:var(--dark); line-height:1.55;">
+    <div style="font-size:11px; font-weight:700; color:var(--amber); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:6px;">Scope note</div>
+    The case study asked specifically for initiatives involving the <strong>consumer app</strong>, so these three recommendations focus on app-side product, matching, and platform choices. The <strong>demand / unique-customer decline</strong> surfaced in the Findings is set aside here and addressed in the <strong>Express strategy</strong> (new demand pools) and in the <strong>marketing allocation</strong> discussion &mdash; not as a core-business app initiative.
+  </div>
+
+  <!-- Sequencing -->
+  <div class="framework">
+    <div class="framework-title">Initiative Sequence &amp; Dependencies</div>
+    <div class="sequence">
+      <div class="seq-step" style="border-top:3px solid var(--accent);">
+        <div class="seq-label">Initiative 1</div>
+        <div class="seq-title">Increase BOs</div>
+        <div style="font-size:11px; color:var(--mid); margin-top:4px;">Rebuild app onboarding &amp; intake as an AI-native problem-to-plan flow</div>
+      </div>
+      <div class="seq-step" style="border-top:3px solid var(--purple);">
+        <div class="seq-label">Initiative 2</div>
+        <div class="seq-title">Increase Hire Rate</div>
+        <div style="font-size:11px; color:var(--mid); margin-top:4px;">Improve app matching and workflow routing</div>
+      </div>
+      <div class="seq-step" style="border-top:3px solid var(--green);">
+        <div class="seq-label">Initiative 3</div>
+        <div class="seq-title">App as Default Platform</div>
+        <div style="font-size:11px; color:var(--mid); margin-top:4px;">For high-intent users, once it proves superior economics</div>
+      </div>
+    </div>
+    <div style="text-align:center; font-size:12px; color:var(--mid); margin-top:10px; font-style:italic;">
+      Each initiative builds the foundation for the next, and all three build infrastructure for Express
+    </div>
+  </div>
+
+  <!-- Initiative 1 -->
+  <div class="initiative">
+    <div class="init-num" style="background:var(--accent);">1</div>
+    <div class="init-body">
+      <div class="init-title">Initiative 1: Increase BOs by rebuilding app onboarding and intake as an AI-native problem-to-plan flow</div>
+      <div class="init-why">When downloading the app, onboarding is close to non-existent and the first landing feels generic and non-personalized. The intake flow also puts too much of the scoping burden on the homeowner &mdash; users often don't know what trade they need, what details matter, or whether the job is simple, urgent, diagnostic, or complex. The app needs to feel like a homeowner OS from day 1.</div>
+      <div class="init-details">
+        <div class="init-box">
+          <div class="init-box-label">What Changes</div>
+          <div class="init-box-content">
+            <strong>Onboarding:</strong> Property-based personalization from day 1 (property type, location, likely maintenance needs).<br><br>
+            <strong>Intake paths:</strong><br>
+            &bull; Fast path - simple, high-intent jobs on homepage<br>
+            &bull; Guided path - AI search for ambiguous jobs<br>
+            &bull; Guides - low-intent users who need help understanding their needs<br><br>
+            <strong>UX:</strong> Simplify entry points. Unify search under AI. Personalize homepage.
+          </div>
+        </div>
+        <div class="init-box">
+          <div class="init-box-label">Hypothesis &amp; Metrics</div>
+          <div class="init-box-content">
+            <strong>If</strong> Checkatrade guides users to what they need and routes simple vs. complex jobs differently,<br>
+            <strong>then</strong> more, higher quality BOs will result.<br><br>
+            <strong>Primary:</strong> Traffic &rarr; BO conversion &uarr;<br>
+            <strong>Secondary:</strong> BOs per customer &uarr;
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px; padding:10px 14px; background:#f0f4ff; border-radius:6px; font-size:12px; color:var(--accent);">
+        <strong>Express bridge:</strong> Creates more structured, higher-quality demand and determines the right service path, the input Express needs.
+      </div>
+    </div>
+  </div>
+
+  <!-- Initiative 2 -->
+  <div class="initiative">
+    <div class="init-num" style="background:var(--purple);">2</div>
+    <div class="init-body">
+      <div class="init-title">Initiative 2: Increase hire rate by improving app matching and workflow routing</div>
+      <div class="init-why">The goal is not to "match better" in the abstract. It is to get each BO into the supplier workflow that can digest it fastest and most effectively &mdash; classifying jobs by digestibility (instant-digest, structured quote, diagnostic, consultative) and routing on workflow compatibility, urgency, site-visit need, response speed, and likely conversion quality.</div>
+      <div class="init-details">
+        <div class="init-box">
+          <div class="init-box-label">What Changes</div>
+          <div class="init-box-content">
+            <strong>Job classification:</strong><br>
+            &bull; Instant-digest<br>
+            &bull; Structured quote<br>
+            &bull; Diagnostic<br>
+            &bull; High-consideration / consultative<br><br>
+            <strong>Routing by:</strong> Workflow compatibility, urgency, site visit need, response speed, conversion quality<br><br>
+            <strong>Better BO packaging:</strong> Structured briefs, urgency signals, quality signals, simple action paths (accept / estimate / callback / decline)
+          </div>
+        </div>
+        <div class="init-box">
+          <div class="init-box-label">Hypothesis &amp; Metrics</div>
+          <div class="init-box-content">
+            <strong>If</strong> each BO is routed into the supplier workflow that can absorb it most efficiently,<br>
+            <strong>then</strong> time-to-hire and hire rate will improve materially.<br><br>
+            <strong>Primary:</strong> Hire rate &uarr;<br>
+            <strong>Secondary:</strong> Time to hire &darr;<br>
+            <strong>Qual:</strong> Buyer + supplier NPS &uarr;
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px; padding:10px 14px; background:#ede9fe; border-radius:6px; font-size:12px; color:var(--purple);">
+        <strong>Express bridge:</strong> Improves matching, routing, and supplier-side conversion, the bridge between lead gen and managed marketplace.
+      </div>
+    </div>
+  </div>
+
+  <!-- Initiative 3 -->
+  <div class="initiative">
+    <div class="init-num" style="background:var(--green);">3</div>
+    <div class="init-body">
+      <div class="init-title">Initiative 3: Make the app the default platform for high-intent users once it proves superior economics</div>
+      <div class="init-why">Initiatives 1 and 2 are designed to make the app meaningfully better: better onboarding, better BO creation, better routing, and better job management. Once that foundation is in place, Checkatrade should not treat web and app as equivalent surfaces &mdash; web stays the broad discovery and capture layer, and the app becomes the default operating environment for high-intent homeowners. Not a channel tactic; a platform shift the app must earn.</div>
+      <div class="init-details">
+        <div class="init-box">
+          <div class="init-box-label">Migration Model</div>
+          <div class="init-box-content">
+            <strong>Web =</strong> Broad discovery &amp; capture layer<br>
+            <strong>App =</strong> Default operating environment for high-intent homeowners<br><br>
+            <strong>Key migration moments:</strong><br>
+            &bull; After first BO creation<br>
+            &bull; When comparing responses<br>
+            &bull; When messaging / trust matter<br>
+            &bull; After job completion (rebooking, records)
+          </div>
+        </div>
+        <div class="init-box">
+          <div class="init-box-label">Hypothesis &amp; Metrics</div>
+          <div class="init-box-content">
+            <strong>If</strong> the app is meaningfully better for high-intent journeys and users are shifted at the right moments,<br>
+            <strong>then</strong> BO conversion, hire rate, and LTV will improve.<br><br>
+            <strong>Primary:</strong> LTV per migrated user &uarr;<br>
+            <strong>Secondary:</strong> Migration rate, conversion lift, repeat usage, rebooking rate
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px; padding:10px 14px; background:var(--green-bg); border-radius:6px; font-size:12px; color:var(--green);">
+        <strong>Express bridge:</strong> Turns the app into the default high-intent surface, strengthens trust, retention, and the path to a homeowner OS.
+      </div>
+    </div>
+  </div>
+
+  <div class="framework">
+    <div class="framework-title">Not "Optimize the Old Business"</div>
+    <p style="font-size:14px; color:var(--dark); line-height:1.6;">These three initiatives are not maintenance work on the core. They are the <strong>first stage of rebuilding Checkatrade as a smarter, more transactable marketplace</strong>. Each one independently improves core business performance. Together, they build the product, data, and operating foundations that Express requires.</p>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 5: EXPRESS STRATEGY -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-express">
+
+  <div class="section-intro">
+    <strong>Express is the wedge into a more managed marketplace.</strong> Goal: prove that in selected categories, a managed model delivers faster time-to-outcome, higher hire rates, higher frequency, and stronger unit economics.
+  </div>
+
+  <!-- GTM Strategy -->
+  <div class="framework">
+    <div class="framework-title">GTM Strategy: Supply-First in Existing Demand Pools</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+      <div>
+        <div style="font-size:13px; font-weight:600; color:var(--navy); margin-bottom:8px;">Launch Approach</div>
+        <div style="font-size:13px; color:var(--mid); line-height:1.6;">
+          Start with existing Checkatrade users. Focus on 1&ndash;3 dense geographies. Launch in a small number of highly digestible categories and acquire supply as needed. Build the operating model first. Expand only once hire rates, reliability, and contribution economics are proven.
+        </div>
+        <div style="margin-top:16px; font-size:13px; font-weight:600; color:var(--navy); margin-bottom:8px;">Why Supply First</div>
+        <div style="font-size:13px; color:var(--mid); line-height:1.6;">
+          Leverage the existing homeowner acquisition engine for the core business. Keep both sides of the marketplace stable. Focus on acquiring trades fit for Express use cases. Start with a proof of concept on existing demand and supply, then expand supply first.
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13px; font-weight:600; color:var(--navy); margin-bottom:8px;">Category Selection Criteria</div>
+        <div class="criteria-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="criteria-item" style="align-items:flex-start; flex-direction:column; gap:4px;">
+            <div><span class="criteria-check">&#10003;</span> <strong>Urgent or frequent</strong></div>
+            <div style="font-size:11px; color:var(--mid); line-height:1.4;">Drives repeat use and density</div>
+          </div>
+          <div class="criteria-item" style="align-items:flex-start; flex-direction:column; gap:4px;">
+            <div><span class="criteria-check">&#10003;</span> <strong>Standardizable</strong></div>
+            <div style="font-size:11px; color:var(--mid); line-height:1.4;">Job can be templated, priced, QA'd consistently</div>
+          </div>
+          <div class="criteria-item" style="align-items:flex-start; flex-direction:column; gap:4px;">
+            <div><span class="criteria-check">&#10003;</span> <strong>Remotely scopable</strong></div>
+            <div style="font-size:11px; color:var(--mid); line-height:1.4;">Priced &amp; committed without a site visit first</div>
+          </div>
+          <div class="criteria-item" style="align-items:flex-start; flex-direction:column; gap:4px;">
+            <div><span class="criteria-check">&#10003;</span> <strong>Operationally manageable</strong></div>
+            <div style="font-size:11px; color:var(--mid); line-height:1.4;">Dispatch, SLAs, QA, complaints can be run at scale</div>
+          </div>
+          <div class="criteria-item" style="grid-column:span 2; align-items:flex-start; flex-direction:column; gap:4px;">
+            <div><span class="criteria-check">&#10003;</span> <strong>Attractive enough to support a take rate</strong></div>
+            <div style="font-size:11px; color:var(--mid); line-height:1.4;">Unit economics leave margin for a transaction fee after trade payout</div>
+          </div>
+        </div>
+        <div style="margin-top:12px; font-size:13px; font-weight:600; color:var(--navy); margin-bottom:8px;">Likely Candidates</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <span class="badge badge-blue">Plumbing fixes</span>
+          <span class="badge badge-blue">Electrical callouts</span>
+          <span class="badge badge-blue">Boiler / heating</span>
+          <span class="badge badge-blue">Drainage / unblocks</span>
+          <span class="badge badge-blue">Cleaning</span>
+          <span class="badge badge-blue">Gardening</span>
+          <span class="badge badge-blue">Handyman</span>
+        </div>
+        <div style="margin-top:10px; font-size:12px; color:var(--red); font-weight:500;">&#10007; Avoid: bespoke, consultative projects (major renovations)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Market Health -->
+  <div class="framework">
+    <div class="framework-title">Granular GTM: Diagnose Category &times; City Health</div>
+    <p style="font-size:13px; color:var(--mid); margin-bottom:16px;">The real operating model should be more granular than a blanket "supply first" rule. Diagnose each market cell and choose the GTM motion accordingly.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Market State</th>
+          <th>Demand</th>
+          <th>Supply</th>
+          <th>GTM Motion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Healthy</strong></td>
+          <td><span class="badge badge-green">Strong</span></td>
+          <td><span class="badge badge-green">Strong</span></td>
+          <td>Focus on routing, conversion, and proving managed value proposition</td>
+        </tr>
+        <tr>
+          <td><strong>Supply-constrained</strong></td>
+          <td><span class="badge badge-green">Strong</span></td>
+          <td><span class="badge badge-red">Weak</span></td>
+          <td>Targeted supply acquisition, activation, short-term incentives</td>
+        </tr>
+        <tr>
+          <td><strong>Demand-constrained</strong></td>
+          <td><span class="badge badge-red">Weak</span></td>
+          <td><span class="badge badge-green">Strong</span></td>
+          <td>Routing from core, selective acquisition, lifecycle reactivation</td>
+        </tr>
+        <tr>
+          <td><strong>Unhealthy</strong></td>
+          <td><span class="badge badge-red">Weak</span></td>
+          <td><span class="badge badge-red">Weak</span></td>
+          <td>Do not prioritize for early Express launch</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Capital Allocation -->
+  <div class="framework">
+    <div class="framework-title">Marketing Capital Allocation</div>
+    <p style="font-size:13px; color:var(--mid); margin-bottom:16px;">Staged allocation, Phase 1 (launch &amp; learn) vs. Phase 2 (proven economics). Principle: do not scale faster than supply quality and fulfillment reliability allow.</p>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#2563eb;"></div>Owned demand</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#16a34a;"></div>Organic / content</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#7c3aed;"></div>Brand / PR</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#d97706;"></div>Influencer / affiliate</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#dc2626;"></div>Paid search</div>
+    </div>
+
+    <div class="phase-bar">
+      <div class="phase-label">Phase 1<br><span style="font-size:11px; color:var(--light-text);">Launch &amp; learn</span></div>
+      <div class="bar-track">
+        <div class="bar-seg" style="width:45%; background:#2563eb;">45%</div>
+        <div class="bar-seg" style="width:22%; background:#16a34a;">22%</div>
+        <div class="bar-seg" style="width:18%; background:#7c3aed;">18%</div>
+        <div class="bar-seg" style="width:7%; background:#d97706;">7%</div>
+        <div class="bar-seg" style="width:12%; background:#dc2626;">12%</div>
+      </div>
+    </div>
+    <div class="phase-bar">
+      <div class="phase-label">Phase 2<br><span style="font-size:11px; color:var(--light-text);">Proven economics</span></div>
+      <div class="bar-track">
+        <div class="bar-seg" style="width:25%; background:#2563eb;">25%</div>
+        <div class="bar-seg" style="width:30%; background:#16a34a;">30%</div>
+        <div class="bar-seg" style="width:20%; background:#7c3aed;">20%</div>
+        <div class="bar-seg" style="width:10%; background:#d97706;">10%</div>
+        <div class="bar-seg" style="width:15%; background:#dc2626;">15%</div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Priority</th>
+            <th>Channel</th>
+            <th>Rationale</th>
+            <th>Scale Condition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-blue">1st</span></td>
+            <td><strong>Owned demand</strong><br><span style="font-size:12px; color:var(--mid);">Core routing, CRM, app, direct</span></td>
+            <td>Lowest CAC. Fastest learning loop. Cleanest way to seed marketplace with high-intent demand.</td>
+            <td>Default, always on</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue">2nd</span></td>
+            <td><strong>Organic capture</strong><br><span style="font-size:12px; color:var(--mid);">SEO, AI search, content, social</span></td>
+            <td>First major external lever. AI changes economics of long-tail capture. Query-universe research over keyword research.</td>
+            <td>Once product + supply are working</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue">3rd</span></td>
+            <td><strong>Brand / PR</strong><br><span style="font-size:12px; color:var(--mid);">Trust messaging, category education</span></td>
+            <td>More important in AI-mediated discovery. Increases confidence at hire moment. Multiplier on demand efficiency.</td>
+            <td>Sustained, measure as multiplier</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue">4th</span></td>
+            <td><strong>Influencer / affiliate</strong><br><span style="font-size:12px; color:var(--mid);">Creator-led, partnerships</span></td>
+            <td>Trust-sensitive category. UGC increasingly surfaced in AI discovery. Use agentic workflows to reduce operating cost.</td>
+            <td>Only if pilots show strong unit economics</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue">5th</span></td>
+            <td><strong>Paid media</strong><br><span style="font-size:12px; color:var(--mid);">PPC, performance</span></td>
+            <td>Treat as portfolio, not default answer. Don't use to cover weak supply or poor fulfillment.</td>
+            <td>Only where payback is proven by category</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Sustainable Growth Loop -->
+  <div class="framework">
+    <div class="framework-title">Sustainable Growth Loop: A Data Network Effect</div>
+
+    <div class="flywheel">
+      <div class="flywheel-ring">
+        <div class="fly-node top">
+          <strong>Successful Jobs</strong><br>Completed reliably through managed flows
+        </div>
+        <div class="fly-node right">
+          <strong>Better Data</strong><br>Trust scores, pricing benchmarks, performance, duration
+        </div>
+        <div class="fly-node bottom">
+          <strong>Household Intelligence</strong><br>Home profiles, maintenance needs, rebooking signals
+        </div>
+        <div class="fly-node left">
+          <strong>Repeat &amp; Referrals</strong><br>Lower paid dependence; referrals flow buyer-to-buyer and, where the OS value prop is strong for both, trade-to-buyer too
+        </div>
+        <div class="fly-center">Managed<br>Marketplace<br>Flywheel</div>
+        <div class="fly-arrow tr">&searr;</div>
+        <div class="fly-arrow br">&swarr;</div>
+        <div class="fly-arrow bl">&nwarr;</div>
+        <div class="fly-arrow tl">&nearr;</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;">
+      <div style="background:var(--bg); border-radius:8px; padding:16px;">
+        <div style="font-size:12px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:0.3px; margin-bottom:6px;">Homeowner Side</div>
+        <div style="font-size:13px; color:var(--dark); line-height:1.6;">
+          Lightweight home profile that gets richer over time: property type, age, boiler/heating/roof context, previous jobs, recurring needs. Enables proactive reminders, easier rebooking, smarter routing, lower transaction cost.
+        </div>
+      </div>
+      <div style="background:var(--bg); border-radius:8px; padding:16px;">
+        <div style="font-size:12px; font-weight:600; color:var(--green); text-transform:uppercase; letter-spacing:0.3px; margin-bottom:6px;">Trade Side</div>
+        <div style="font-size:13px; color:var(--dark); line-height:1.6;">
+          Better trade workflows make Checkatrade OS more convenient than off-platform. Suppliers want to do more jobs on-platform. Better performance data, structured demand, less admin, higher conversion.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disintermediation defense -->
+  <div class="framework">
+    <div class="framework-title">Product Design: Reduce Disintermediation from Day One</div>
+    <p style="font-size:14px; color:var(--dark); line-height:1.6;">The managed marketplace must be designed so that both homeowners and trades find more value staying on-platform than going around it. This happens when the platform owns scoping, trust signals, payments, guarantees, communication, and household memory, not just the initial introduction.</p>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 6: ORG & KPIS -->
+<!-- ============================================================ -->
+<div class="tab-content" id="tab-org">
+
+  <div class="section-intro">
+    <strong>One integrated system, not two businesses.</strong> Dedicated Growth and Express pods, supported by a shared Marketplace Intelligence &amp; Platform layer. Product and marketing report into the growth leader; engineering, data, and design into central functional leaders but embedded in pods.
+  </div>
+
+  <!-- Org Chart -->
+  <div class="framework">
+    <div class="framework-title">Pod-Based Organization</div>
+    <p style="font-size:13px; color:var(--mid); margin-bottom:16px; line-height:1.55;">
+      Three <strong>cross-functional pods</strong> &mdash; each staffed with dedicated <strong>product, marketing, engineering, data, and design</strong> capacity, so every pod can ship end-to-end against its mission without cross-team dependencies becoming the bottleneck. Functional reporting lines (engineering, data, design) still run through central functional leaders to preserve shared standards and infrastructure; day-to-day, those people sit and plan inside the pods.
+    </p>
+    <div class="org-chart">
+      <div class="org-level">
+        <div class="org-box" style="border-left:4px solid var(--accent);">
+          <div class="org-title">Growth Pod</div>
+          <div class="org-sub">Get as many homeowners and trades as possible to experience Checkatrade's core value, as frequently as possible.</div>
+          <div class="org-kpi">
+            <div class="org-kpi-label">Primary KPI</div>
+            <div class="org-kpi-val">BOs Created</div>
+            <div class="org-kpi-label" style="margin-top:4px;">Secondary KPI</div>
+            <div class="org-kpi-val">CAC / Payback Period</div>
+          </div>
+          <div style="font-size:11px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.4px; margin-top:14px; margin-bottom:6px;">Owns</div>
+          <div class="org-owns">
+            &bull; Homeowner acquisition &amp; activation<br>
+            &bull; Trade acquisition &amp; activation<br>
+            &bull; App &amp; web growth surfaces<br>
+            &bull; Lifecycle &amp; CRM<br>
+            &bull; Homeowner engagement &amp; repeat usage
+          </div>
+        </div>
+        <div class="org-box" style="border-left:4px solid var(--purple);">
+          <div class="org-title">Express / Managed Marketplace Pod</div>
+          <div class="org-sub">Deliver reliable, high-trust outcomes in selected categories at profitable unit economics &mdash; turning BOs into completed managed jobs.</div>
+          <div class="org-kpi">
+            <div class="org-kpi-label">Primary KPI</div>
+            <div class="org-kpi-val">Hired to Job Completed Rate</div>
+            <div class="org-kpi-label" style="margin-top:4px;">Secondary KPI</div>
+            <div class="org-kpi-val">Contribution Margin per Managed Job</div>
+          </div>
+          <div style="font-size:11px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.4px; margin-top:14px; margin-bottom:6px;">Owns</div>
+          <div class="org-owns">
+            &bull; Category launch sequencing<br>
+            &bull; Supply quality &amp; density<br>
+            &bull; Pricing<br>
+            &bull; Fulfillment reliability<br>
+            &bull; Trust, reputation &amp; guarantees<br>
+            &bull; Tradespeople OS<br>
+            &bull; Homeowner OS (managed flows)
+          </div>
+        </div>
+        <div class="org-box" style="border-left:4px solid var(--green);">
+          <div class="org-title">Marketplace Intelligence &amp; Platform</div>
+          <div class="org-sub">Convert every BO into the right hire as quickly as possible by owning intake, matching, and the shared AI/data layer the other pods run on.</div>
+          <div class="org-kpi">
+            <div class="org-kpi-label">Primary KPI</div>
+            <div class="org-kpi-val">Hire Rate</div>
+            <div class="org-kpi-label" style="margin-top:4px;">Secondary KPI</div>
+            <div class="org-kpi-val">Time to Hire</div>
+          </div>
+          <div style="font-size:11px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.4px; margin-top:14px; margin-bottom:6px;">Owns</div>
+          <div class="org-owns">
+            &bull; Intake &amp; job scoping<br>
+            &bull; Matching &amp; routing<br>
+            &bull; AI-native decisioning systems<br>
+            &bull; Experimentation infrastructure<br>
+            &bull; Shared event &amp; data layer
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Operating model -->
+  <div class="framework">
+    <div class="framework-title">Operating Model: Hybrid AI-Native Growth Organization</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Function</th>
+          <th>Reports To</th>
+          <th>How It Works</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Product</strong></td>
+          <td>Growth leader</td>
+          <td>Strategic bets cut across product and marketing, they must be unified under one leader</td>
+        </tr>
+        <tr>
+          <td><strong>Marketing</strong></td>
+          <td>Growth leader</td>
+          <td>Demand generation, brand, CRM, lifecycle, content all report into growth</td>
+        </tr>
+        <tr>
+          <td><strong>Engineering</strong></td>
+          <td>Central functional leader</td>
+          <td>Embedded in pods with dedicated day-to-day capacity; shared standards and infrastructure</td>
+        </tr>
+        <tr>
+          <td><strong>Data</strong></td>
+          <td>Central functional leader</td>
+          <td>Embedded in pods; shared data layer powers Growth and Express equally</td>
+        </tr>
+        <tr>
+          <td><strong>Design</strong></td>
+          <td>Central functional leader</td>
+          <td>Embedded in pods; consistency across surfaces while serving pod-specific needs</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- KPI Framework -->
+  <div class="framework">
+    <div class="framework-title">KPI Framework</div>
+    <div style="background:#fff7ed; border:1px solid #fdba74; border-left:4px solid var(--amber); border-radius:6px; padding:12px 16px; margin-bottom:16px; font-size:13px; color:var(--dark); line-height:1.55;">
+      <div style="font-size:11px; font-weight:700; color:var(--amber); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;">North-star transition</div>
+      Shifting the company-level north star from BOs to <strong>Successful Jobs Completed</strong> is the right long-term direction, but it should be <strong>gradual, not a flip</strong>. The current revenue engine is still monetizing introductions, and that P&amp;L has to be protected while Express proves the managed model. In practice, expect a transition period where BOs Created and Successful Jobs Completed are both tracked at the top level, with weighting shifting toward outcomes as managed-job volume, reliability, and contribution margin scale.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>Metric</th>
+          <th>Owned By</th>
+          <th>Why It Matters</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-green">Company</span></td>
+          <td><strong>Successful Jobs Completed</strong></td>
+          <td>All pods</td>
+          <td>The long-term north star &mdash; optimize for outcomes, not just BO volume. Phased in gradually while the lead-gen revenue engine is protected</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Growth</span></td>
+          <td><strong>BOs Created</strong></td>
+          <td>Growth Pod</td>
+          <td>Volume of demand entering the system</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Growth</span></td>
+          <td><strong>CAC / Payback Period</strong></td>
+          <td>Growth Pod</td>
+          <td>Efficiency and sustainability of acquisition</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-purple">Express</span></td>
+          <td><strong>Hired to Job Completed Rate</strong></td>
+          <td>Express Pod</td>
+          <td>Proves the managed model actually delivers &mdash; a hire only counts when the job is completed reliably</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-purple">Express</span></td>
+          <td><strong>Contribution Margin / Job</strong></td>
+          <td>Express Pod</td>
+          <td>Unit economics of the managed marketplace</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green" style="background:#dcfce7; color:#16a34a;">Platform</span></td>
+          <td><strong>Hire Rate</strong></td>
+          <td>MI &amp; Platform</td>
+          <td>Conversion quality of the matching and routing engine</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green" style="background:#dcfce7; color:#16a34a;">Platform</span></td>
+          <td><strong>Time to Hire</strong></td>
+          <td>MI &amp; Platform</td>
+          <td>Speed of the marketplace, directly impacts customer experience</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Strategic bet mapping -->
+  <div class="framework">
+    <div class="framework-title">How Pods Map to the Four Strategic Bets</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Strategic Bet</th>
+          <th>Primary Pod</th>
+          <th>Supporting Pod(s)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Go deeper with supply by becoming the operating system for tradespeople</strong></td>
+          <td>Express</td>
+          <td>Growth acquires &amp; activates trades; Express deepens supply quality &amp; tooling</td>
+        </tr>
+        <tr>
+          <td><strong>2. Move up the marketplace management stack</strong></td>
+          <td>Express</td>
+          <td>Owns the managed model end-to-end</td>
+        </tr>
+        <tr>
+          <td><strong>3. Build AI natively into the marketplace</strong></td>
+          <td>MI &amp; Platform</td>
+          <td>Owns intake, routing, and decisioning; serves both Growth and Express</td>
+        </tr>
+        <tr>
+          <td><strong>4. Increase customer engagement and build the operating system for homeowners</strong></td>
+          <td>Growth + Express</td>
+          <td>Jointly own repeat usage and richer household workflows</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+
+<script>
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  const buttons = document.querySelectorAll('.tab-btn');
+  const tabMap = ['memo','context','findings','core','express','org'];
+  const idx = tabMap.indexOf(tabId);
+  if (idx >= 0) buttons[idx].classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Smooth scroll for TOC links
+document.querySelectorAll('.toc a').forEach(a => {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>
